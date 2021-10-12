@@ -1,0 +1,8 @@
+.idea
+.gradle
+*.iml
+build
+npm-debug.log
+node_modules
+logs/
+out/
