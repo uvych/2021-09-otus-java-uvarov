@@ -1,19 +1,33 @@
 plugins {
-    id 'java'
+    id 'idea'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.github.johnrengelman.shadow' version '6.1.0' apply false
 }
 
-group 'org.example'
+group 'ru.otus'
 version '1.0-SNAPSHOT'
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+idea {
+    project {
+        languageLevel = 16
+    }
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
 
-test {
-    useJUnitPlatform()
+allprojects {
+    group "ru.otus"
+    apply plugin: "io.spring.dependency-management"
+    dependencyManagement {
+        dependencies {
+            dependency("com.google.guava:guava:${Versions.guava}")
+        }
+    }
 }
