@@ -1,4 +1,5 @@
 rootProject.name = '2021-09-otus-java-uvarov'
 include 'hw1-gradle'
-include 'hw1-generic_collections'
+include 'hw2-generic_collections'
+include 'hw3-my-test-framework'
 
