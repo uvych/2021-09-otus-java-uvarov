@@ -1,7 +1,6 @@
 package testframework;
 
 import annotation.*;
-import test.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -10,30 +9,23 @@ import java.util.logging.*;
 public class MyTestFramework {
     private static final Logger log = Logger.getLogger(MyTestFramework.class.getName());
 
-    private static final List<Method> beforeMethods = new ArrayList<>();
-    private static final List<Method> testMethods = new ArrayList<>();
-    private static final List<Method> afterMethods = new ArrayList<>();
     private static int countSuccessTest;
     private static int countFailedTest;
 
-    public static void main(String[] args) {
-        setTestsClass(Arrays.asList(ArrayTest.class, ArrayTestFail.class));
-    }
-
-    private static void setTestsClass(List<Class<?>> classes) {
+    static void setClassesAndTest(List<Class<?>> classes) {
         for (Class<?> tClass : classes) {
-            start(tClass);
+            startTestsClasses(tClass);
         }
         log.info(countFailedTest + countSuccessTest + ":tests in total   " +
             countFailedTest + ":failed   " + countSuccessTest + ":success");
     }
 
-    private static <T> void start(Class<T> type) {
-        getMethodsWithAnnotation(type);
-        for (Method testMethod : testMethods) {
+    private static <T> void startTestsClasses(Class<T> type) {
+        TestModel testModel = getTestModel(type);
+        for (Method testMethod : testModel.getTestMethod()) {
             log.info("START TEST: " + testMethod.getName());
             try {
-                startTest(type, testMethod);
+                startAllTestsInClass(type, testMethod, testModel);
                 log.info("SUCCESS TEST: " + testMethod.getName());
                 countSuccessTest ++;
             } catch (Exception ex) {
@@ -43,52 +35,37 @@ public class MyTestFramework {
         }
     }
 
-    private static <T> void startTest(Class<T> type, Method testMethod) {
+    private static <T> void startAllTestsInClass(Class<T> type, Method testMethod, TestModel testModel) {
         T instant = instantiate(type);
-
-        for (Method beforeMethod : beforeMethods) {
-            callMethod(instant, beforeMethod.getName());
-        }
-
         try {
-            callMethod(instant, testMethod.getName());
-        } catch (RuntimeException ex) {
-            afterMethodsCall(instant);
-            throw ex;
-        }
-
-        afterMethodsCall(instant);
-    }
-
-    private static void cleanMethodsList() {
-        beforeMethods.clear();
-        afterMethods.clear();
-        testMethods.clear();
-    }
-
-    private static <T> void afterMethodsCall(T instant) {
-        for (Method afterMethod : afterMethods) {
-            callMethod(instant, afterMethod.getName());
-        }
-    }
-
-    private static <T> void getMethodsWithAnnotation(Class<T> type) {
-        cleanMethodsList();
-        Method [] methods = type.getMethods();
-        for (Method method : methods) {
-            if (method.getAnnotation(Before.class) != null) {
-                beforeMethods.add(method);
-            } else if (method.getAnnotation(Test.class) != null) {
-                testMethods.add(method);
-            } else if (method.getAnnotation(After.class) != null) {
-                afterMethods.add(method);
+            for (Method beforeMethod : testModel.getBeforeMethod()) {
+                callMethod(instant, beforeMethod);
+            }
+            callMethod(instant, testMethod);
+        } finally {
+            for (Method afterMethod : testModel.getAfterMethod()) {
+                callMethod(instant, afterMethod);
             }
         }
     }
 
-    private static Object callMethod(Object obj, String name, Object... args) {
+    private static <T> TestModel getTestModel(Class<T> type) {
+        TestModel testClass = TestModel.createTestModel();
+        Method [] methods = type.getMethods();
+        for (Method method : methods) {
+            if (method.getAnnotation(Before.class) != null) {
+                testClass.addBeforeMethod(method);
+            } else if (method.getAnnotation(Test.class) != null) {
+                testClass.addTestMethod(method);
+            } else if (method.getAnnotation(After.class) != null) {
+                testClass.addAfterMethod(method);
+            }
+        }
+        return testClass;
+    }
+
+    private static Object callMethod(Object obj, Method method, Object... args) {
         try {
-            var method = obj.getClass().getDeclaredMethod(name, toClasses(args));
             method.setAccessible(true);
             return method.invoke(obj, args);
         } catch (Exception ex) {
@@ -111,25 +88,5 @@ public class MyTestFramework {
 
     private static Class<?>[] toClasses(Object[] args) {
         return Arrays.stream(args).map(Object::getClass).toArray(Class<?>[]::new);
-    }
-
-    private static void setFieldValue(Object obj, String name, Object value) {
-        try {
-            var field = obj.getClass().getDeclaredField(name);
-            field.setAccessible(true);
-            field.set(obj, value);
-        } catch (Exception ex) {
-            throw new RuntimeException();
-        }
-    }
-
-    private static Object getFieldValue(Object obj, String name) {
-        try {
-            var field = obj.getClass().getDeclaredField(name);
-            field.setAccessible(true);
-            return field.get(obj);
-        } catch (Exception ex) {
-            throw new RuntimeException();
-        }
     }
 }
