@@ -9,33 +9,39 @@ import java.util.logging.*;
 public class MyTestFramework {
     private static final Logger log = Logger.getLogger(MyTestFramework.class.getName());
 
-    private static int countSuccessTest;
-    private static int countFailedTest;
+    static void setClassesAndTest(Class<?> ...classes) {
+        List<TestResult> resultList = new ArrayList<>();
 
-    static void setClassesAndTest(List<Class<?>> classes) {
         for (Class<?> tClass : classes) {
-            startTestsClasses(tClass);
+            startAllTestsInClass(tClass, resultList);
         }
-        log.info(countFailedTest + countSuccessTest + ":tests in total   " +
-            countFailedTest + ":failed   " + countSuccessTest + ":success");
+
+        log.info(TestResult.countAllTests(resultList) + ":tests in total   " +
+            TestResult.getFieldTests(resultList) + ":failed   " + TestResult.getSuccessTests(resultList) + ":success");
     }
 
-    private static <T> void startTestsClasses(Class<T> type) {
+    private static <T> void startAllTestsInClass(Class<T> type, List<TestResult> resultList) {
         TestModel testModel = getTestModel(type);
         for (Method testMethod : testModel.getTestMethod()) {
             log.info("START TEST: " + testMethod.getName());
             try {
-                startAllTestsInClass(type, testMethod, testModel);
+                startTestInClass(type, testMethod, testModel);
                 log.info("SUCCESS TEST: " + testMethod.getName());
-                countSuccessTest ++;
+                resultList.add(TestResult.builder()
+                        .testName(testMethod.getName()).build()
+                );
             } catch (Exception ex) {
-                countFailedTest ++;
+                resultList.add(TestResult.builder()
+                        .testName(testMethod.getName())
+                        .isSuccess(false)
+                        .exMessage(ex.getMessage()).build()
+                );
                 log.info("TEST FILED: " + testMethod);
             }
         }
     }
 
-    private static <T> void startAllTestsInClass(Class<T> type, Method testMethod, TestModel testModel) {
+    private static <T> void startTestInClass(Class<T> type, Method testMethod, TestModel testModel) {
         T instant = instantiate(type);
         try {
             for (Method beforeMethod : testModel.getBeforeMethod()) {
@@ -64,10 +70,10 @@ public class MyTestFramework {
         return testClass;
     }
 
-    private static Object callMethod(Object obj, Method method, Object... args) {
+    private static void callMethod(Object obj, Method method, Object... args) {
         try {
             method.setAccessible(true);
-            return method.invoke(obj, args);
+            method.invoke(obj, args);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
