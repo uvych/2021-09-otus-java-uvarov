@@ -17,7 +17,7 @@ public class TestResult {
                 return resultList.stream().filter(r -> r.isSuccess).count();
         }
 
-        public static long getFieldTests(List<TestResult> resultList) {
+        public static long getFailedTests(List<TestResult> resultList) {
                 return resultList.stream().filter(r -> !r.isSuccess).count();
         }
 

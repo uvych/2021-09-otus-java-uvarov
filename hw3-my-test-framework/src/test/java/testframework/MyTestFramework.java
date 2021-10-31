@@ -13,15 +13,16 @@ public class MyTestFramework {
         List<TestResult> resultList = new ArrayList<>();
 
         for (Class<?> tClass : classes) {
-            startAllTestsInClass(tClass, resultList);
+            resultList.addAll(startAllTestsInClass(tClass));
         }
 
         log.info(TestResult.countAllTests(resultList) + ":tests in total   " +
-            TestResult.getFieldTests(resultList) + ":failed   " + TestResult.getSuccessTests(resultList) + ":success");
+            TestResult.getFailedTests(resultList) + ":failed   " + TestResult.getSuccessTests(resultList) + ":success");
     }
 
-    private static <T> void startAllTestsInClass(Class<T> type, List<TestResult> resultList) {
+    private static <T> List<TestResult> startAllTestsInClass(Class<T> type) {
         TestModel testModel = getTestModel(type);
+        List<TestResult> resultList = new ArrayList<>();
         for (Method testMethod : testModel.getTestMethod()) {
             log.info("START TEST: " + testMethod.getName());
             try {
@@ -39,6 +40,7 @@ public class MyTestFramework {
                 log.info("TEST FILED: " + testMethod);
             }
         }
+        return resultList;
     }
 
     private static <T> void startTestInClass(Class<T> type, Method testMethod, TestModel testModel) {
