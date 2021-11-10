@@ -17,3 +17,8 @@ with Serial Collector
 ZGC
 Mem  = 1000m
 msec = 6243
+
+После оптимизации
+|      |   GC1     |    ZGC     | Serial Collector  |
+|m     |256   1800 | 256   1800 |   256   1800      |
+|msec  |2063  1573 | 2084  1322 |  3125   1236      |
