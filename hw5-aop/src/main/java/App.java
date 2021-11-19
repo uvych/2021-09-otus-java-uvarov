@@ -3,10 +3,14 @@ import model.*;
 
 public class App {
     public static void main(String[] args) {
-        Calculable calculable = IoC.createIoC(new TestLogging());
+        Calculable testLogging = IoC.createIoC(new TestLogging());
+        Calculable secondTestLogging = IoC.createIoC(new SecondTestLogging());
 
-        calculable.calculation(1);
-        calculable.calculation(1,2);
-        calculable.calculation(1, 2, "Str");
+        secondTestLogging.calculation(1);
+        secondTestLogging.calculation(1, 3);
+        secondTestLogging.calculation(1 ,3 , "Str");
+        testLogging.calculation(1);
+        testLogging.calculation(1,2);
+        testLogging.calculation(1, 2, "Str");
     }
 }
