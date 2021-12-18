@@ -4,3 +4,5 @@ include 'hw2-generic_collections'
 include 'hw3-my-test-framework'
 include 'hw4-gc'
 include 'hw5-aop'
+include 'hw6-ATM'
+
