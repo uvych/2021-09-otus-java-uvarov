@@ -5,4 +5,6 @@ include 'hw3-my-test-framework'
 include 'hw4-gc'
 include 'hw5-aop'
 include 'hw6-ATM'
+include 'hw8-io'
+include 'hw8-json'
 
