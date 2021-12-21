@@ -14,10 +14,9 @@ public class Demo {
         var processors = List.of(new ProcessorConcatFields(),
                 new LoggerProcessor(new ProcessorUpperField10()));
 
-        var complexProcessor = new ComplexProcessor(processors, ex -> {});
+        var complexProcessor = new ComplexProcessor(processors, ex -> {  });
         var listenerPrinter = new ListenerPrinterConsole();
         complexProcessor.addListener(listenerPrinter);
-
         var message = new Message.Builder(1L)
                 .field1("field1")
                 .field2("field2")

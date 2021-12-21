@@ -1,24 +1,36 @@
 package ru.otus;
 
+import ru.otus.handler.ComplexProcessor;
+import ru.otus.listener.homework.HistoryListener;
+import ru.otus.model.Message;
+import ru.otus.processor.LoggerProcessor;
+import ru.otus.processor.homework.EvenSecondExProcessor;
+import ru.otus.processor.homework.SwapProcessor;
+
+import java.util.List;
+
 public class HomeWork {
 
-    /*
-     Реализовать to do:
-       1. Добавить поля field11 - field13 (для field13 используйте класс ObjectForMessage)
-       2. Сделать процессор, который поменяет местами значения field11 и field12
-       3. Сделать процессор, который будет выбрасывать исключение в четную секунду (сделайте тест с гарантированным результатом)
-             Секунда должна определяьться во время выполнения.
-             Тест - важная часть задания
-             Обязательно посмотрите пример к паттерну Мементо!
-       4. Сделать Listener для ведения истории (подумайте, как сделать, чтобы сообщения не портились)
-          Уже есть заготовка - класс HistoryListener, надо сделать его реализацию
-          Для него уже есть тест, убедитесь, что тест проходит
-     */
-
     public static void main(String[] args) {
-        /*
-           по аналогии с Demo.class
-           из элеменов "to do" создать new ComplexProcessor и обработать сообщение
-         */
+        var processors = List.of(new SwapProcessor(),
+            new LoggerProcessor(new EvenSecondExProcessor()));
+
+        var complexProcessor = new ComplexProcessor(processors, ex -> {
+            System.out.println(ex.getMessage());
+        });
+        var listenerHistory = new HistoryListener();
+        complexProcessor.addListener(listenerHistory);
+        var message = new Message.Builder(1L)
+            .field1("field1")
+            .field10("field10")
+            .field11("filed11")
+            .field12("filed12")
+            .build();
+
+        var result = complexProcessor.handle(message);
+        System.out.println("result:" + result);
+        System.out.println("field12: " + result.getField12());
+        System.out.println("field11: " + listenerHistory.findMessageById(1L).get().getField11());;
+        complexProcessor.removeListener(listenerHistory);
     }
 }
