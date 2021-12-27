@@ -6,20 +6,21 @@ import otus.model.Measurement;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.List;
 
 public class ResourcesFileLoader implements Loader {
-    private final String filePath;
+    private final URL filePath;
 
     public ResourcesFileLoader(String fileName) {
-        filePath = System.getProperty("user.dir") + "/src/main/resources/" + fileName;
+        filePath = getClass().getClassLoader().getResource(fileName);
     }
 
     @Override
     public List<Measurement> load() {
         FileReader fileReader;
         try {
-            fileReader = new FileReader(filePath);
+            fileReader = new FileReader(filePath.getFile());
         } catch (FileNotFoundException e) {
             throw new FileProcessException(e.getMessage());
         }
