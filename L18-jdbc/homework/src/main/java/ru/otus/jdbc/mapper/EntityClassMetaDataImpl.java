@@ -7,7 +7,7 @@ import ru.otus.annotation.Id;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T>{
@@ -16,47 +16,76 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T>{
 
     private final Class<T> tClass;
 
+    private String nameCache = null;
+
+    private Constructor<T> constructorCache = null;
+
+    private Field idFieldCache = null;
+
+    private final List<Field> allFieldsCache = new ArrayList<>();
+
+    private final List<Field> fieldsWithOutIdCache = new ArrayList<>();
+
     public EntityClassMetaDataImpl(Class<T> tClass) {
         this.tClass = tClass;
     }
 
     @Override
     public String getName()  {
-       return tClass.getSimpleName();
+        if (nameCache == null) {
+            nameCache = tClass.getSimpleName();
+            return nameCache;
+        }
+       return nameCache;
     }
 
     @Override
     public Constructor<T> getConstructor() {
-        try {
-            return tClass.getConstructor();
-        } catch (NoSuchMethodException e) {
-            log.error(e.getMessage());
+        if (constructorCache == null) {
+            try {
+                constructorCache = tClass.getConstructor();
+                return constructorCache;
+            } catch (NoSuchMethodException e) {
+                log.error(e.getMessage());
+            }
         }
-        return null;
+
+        return constructorCache;
     }
 
     @Override
     public Field getIdField() {
-        Field [] fields = tClass.getDeclaredFields();
-        for (Field field : fields) {
-            Annotation [] annotations = field.getAnnotations();
-            for (Annotation annotation : annotations) {
-                if (annotation.annotationType().equals(Id.class)) {
-                    return field;
+        if (idFieldCache == null) {
+            Field [] fields = tClass.getDeclaredFields();
+            for (Field field : fields) {
+                Annotation [] annotations = field.getAnnotations();
+                for (Annotation annotation : annotations) {
+                    if (annotation.annotationType().equals(Id.class)) {
+                        idFieldCache = field;
+                        return idFieldCache;
+                    }
                 }
             }
         }
-        return null;
+        return idFieldCache;
     }
 
     @Override
     public List<Field> getAllFields() {
-        return List.of(tClass.getDeclaredFields());
+        if (allFieldsCache.isEmpty()) {
+            allFieldsCache.addAll(List.of(tClass.getDeclaredFields()));
+        }
+        return allFieldsCache;
     }
 
     @Override
     public List<Field> getFieldsWithoutId() {
-        return Arrays.stream(tClass.getDeclaredFields())
-            .filter((field) -> !field.equals(getIdField())).toList();
+        if (fieldsWithOutIdCache.isEmpty()) {
+            fieldsWithOutIdCache.addAll(
+                getAllFields().stream()
+                .filter((field) -> !field.equals(getIdField())).toList()
+            );
+        }
+        return fieldsWithOutIdCache;
     }
 }

@@ -1,5 +1,7 @@
 package ru.otus.jdbc.mapper.mapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.otus.core.repository.DataTemplateException;
 import ru.otus.jdbc.mapper.EntityClassMetaDataImpl;
 
@@ -10,7 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InstanceHelper<T> {
+public class InstanceHelper<T> implements Helper<T>{
+    private static final Logger log = LoggerFactory.getLogger(InstanceHelper.class);
     private final EntityClassMetaDataImpl<T> classMetaData;
 
     public InstanceHelper(EntityClassMetaDataImpl<T> classMetaData) {
@@ -29,6 +32,7 @@ public class InstanceHelper<T> {
         try {
             return constructor.newInstance(params);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            log.error("create Obj ex");
             throw new DataTemplateException(e);
         }
     }
@@ -42,18 +46,34 @@ public class InstanceHelper<T> {
                 value = rs.getObject(fieldName);
                 field.set(instance, value);
             } catch (IllegalAccessException | SQLException e) {
+                log.error("Failed map field = {}", field.getName());
                 throw new DataTemplateException(e);
             }
         }
     }
 
-    public List<Object> getFieldsValues(T objectData) {
+    public List<Object> getFieldsValuesWithoutID(T objectData) {
         var values = new ArrayList<>();
         for (Field field : classMetaData.getFieldsWithoutId()) {
             field.setAccessible(true);
             try {
                 values.add(field.get(objectData));
             } catch (IllegalAccessException e) {
+                log.error("Failed find value for field = {}", field.getName());
+                throw new DataTemplateException(e);
+            }
+        }
+        return values;
+    }
+
+    public List<Object> getFieldsValues(T objectData) {
+        var values = new ArrayList<>();
+        for (Field field : classMetaData.getAllFields()) {
+            field.setAccessible(true);
+            try {
+                values.add(field.get(objectData));
+            } catch (IllegalAccessException e) {
+                log.error("Failed find value for field = {}", field.getName());
                 throw new DataTemplateException(e);
             }
         }

@@ -3,7 +3,7 @@ package ru.otus.jdbc.mapper;
 import ru.otus.core.repository.DataTemplate;
 import ru.otus.core.repository.DataTemplateException;
 import ru.otus.core.repository.executor.DbExecutor;
-import ru.otus.jdbc.mapper.mapper.InstanceHelper;
+import ru.otus.jdbc.mapper.mapper.Helper;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,9 +19,9 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     private final DbExecutor dbExecutor;
     private final EntitySQLMetaData entitySQLMetaData;
-    private final InstanceHelper<T> instanceHelper;
+    private final Helper<T> instanceHelper;
 
-    public DataTemplateJdbc(DbExecutor dbExecutor, EntitySQLMetaData entitySQLMetaData, InstanceHelper<T> instanceHelper) {
+    public DataTemplateJdbc(DbExecutor dbExecutor, EntitySQLMetaData entitySQLMetaData, Helper<T> instanceHelper) {
         this.dbExecutor = dbExecutor;
         this.entitySQLMetaData = entitySQLMetaData;
         this.instanceHelper = instanceHelper;
@@ -60,7 +60,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
     public long insert(Connection connection, T client) {
         try {
             return dbExecutor.executeStatement(connection, entitySQLMetaData.getInsertSql(),
-                instanceHelper.getFieldsValues(client));
+                instanceHelper.getFieldsValuesWithoutID(client));
         } catch (Exception e) {
             throw new DataTemplateException(e);
         }

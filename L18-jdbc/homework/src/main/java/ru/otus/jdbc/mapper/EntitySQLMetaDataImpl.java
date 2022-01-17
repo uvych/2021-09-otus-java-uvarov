@@ -1,7 +1,9 @@
 package ru.otus.jdbc.mapper;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
     private static final String SELECT = "select\s";
@@ -19,34 +21,57 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     private final EntityClassMetaData<?> entityClassMetaData;
 
+    private final Map<SQLCommand, String> cacheSQL = new HashMap<>();
+
     public EntitySQLMetaDataImpl(EntityClassMetaDataImpl<?> entityClassMetaData) {
         this.entityClassMetaData = entityClassMetaData;
     }
 
     @Override
     public String getSelectAllSql() {
-        return SELECT + ALL + FROM +
-            entityClassMetaData.getName().toLowerCase();
+        String sql = cacheSQL.get(SQLCommand.SELECT_ALL);
+        if (sql == null) {
+            sql = SELECT + ALL + FROM +
+                entityClassMetaData.getName().toLowerCase();
+            cacheSQL.put(SQLCommand.SELECT_ALL, sql);
+        }
+        return sql;
     }
 
     @Override
     public String getSelectByIdSql() {
-        return SELECT + getSelectParameter(entityClassMetaData.getAllFields())
-            + FROM + entityClassMetaData.getName() + WHERE + entityClassMetaData.getIdField().getName() + EQUAL_SING + MARK;
+        String sql = cacheSQL.get(SQLCommand.SELECT_BY_ID);
+        if (sql == null) {
+            sql = SELECT + getSelectParameter(entityClassMetaData.getAllFields())
+                + FROM + entityClassMetaData.getName()
+                + WHERE + entityClassMetaData.getIdField().getName() + EQUAL_SING + MARK;
+            cacheSQL.put(SQLCommand.SELECT_BY_ID, sql);
+        }
+        return sql;
     }
 
     @Override
     public String getInsertSql() {
-        List<Field> fields = entityClassMetaData.getFieldsWithoutId();
-        return INSERT + entityClassMetaData.getName().toLowerCase() + PARENTHESES_LEFT
-            + getSelectParameter(fields) + PARENTHESES_RIGHT
-            + VALUES + PARENTHESES_LEFT + getMarks(fields.size()) + PARENTHESES_RIGHT;
+        String sql = cacheSQL.get(SQLCommand.INSERT);
+        if (sql == null) {
+            List<Field> fields = entityClassMetaData.getFieldsWithoutId();
+            sql = INSERT + entityClassMetaData.getName().toLowerCase() + PARENTHESES_LEFT
+                + getSelectParameter(fields) + PARENTHESES_RIGHT
+                + VALUES + PARENTHESES_LEFT + getMarks(fields.size()) + PARENTHESES_RIGHT;
+            cacheSQL.put(SQLCommand.INSERT, sql);
+        }
+        return sql;
     }
 
     @Override
     public String getUpdateSql() {
-        return UPDATE + entityClassMetaData.getName().toLowerCase()
-            + SET + getUpdateParameter() + WHERE + entityClassMetaData.getIdField() + EQUAL_SING + MARK;
+        String sql = cacheSQL.get(SQLCommand.UPDATE);
+        if (sql == null) {
+            sql = UPDATE + entityClassMetaData.getName().toLowerCase()
+                + SET + getUpdateParameter() + WHERE + entityClassMetaData.getIdField() + EQUAL_SING + MARK;
+            cacheSQL.put(SQLCommand.UPDATE, sql);
+        }
+        return sql;
     }
 
     private String getSelectParameter(List<Field> fields) {
