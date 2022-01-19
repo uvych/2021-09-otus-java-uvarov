@@ -1,12 +1,8 @@
 package ru.otus.crm.model;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name = "client")
@@ -20,6 +16,12 @@ public class Client implements Cloneable {
     @Column(name = "name")
     private String name;
 
+    @OneToOne(orphanRemoval = true)
+    private Address address;
+
+    @OneToMany(orphanRemoval = true)
+    private List<Phone> phone;
+
     public Client() {
     }
 
@@ -31,6 +33,13 @@ public class Client implements Cloneable {
     public Client(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Client(Long id, String name, Address address, List<Phone> phone) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
     }
 
     @Override
@@ -54,11 +63,29 @@ public class Client implements Cloneable {
         this.name = name;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public List<Phone> getPhone() {
+        return phone;
+    }
+
+    public void setPhone(List<Phone> phone) {
+        this.phone = phone;
+    }
+
     @Override
     public String toString() {
         return "Client{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", address=" + address +
+            ", phone=" + phone +
+            '}';
     }
 }
