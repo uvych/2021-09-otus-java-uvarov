@@ -1,6 +1,8 @@
 package ru.otus.crm.model;
 
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -16,11 +18,11 @@ public class Client implements Cloneable {
     @Column(name = "name")
     private String name;
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.PERSIST)
     private Address address;
 
-    @OneToMany(orphanRemoval = true)
-    private List<Phone> phone;
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.PERSIST, mappedBy = "client")
+    private List<Phone> phones;
 
     public Client() {
     }
@@ -35,14 +37,19 @@ public class Client implements Cloneable {
         this.name = name;
     }
 
-    public Client(Long id, String name, Address address, List<Phone> phone) {
+    public Client(Long id, String name, Address address, List<Phone> phones) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.phone = phone;
+        this.phones = phones;
+        addClient();
     }
 
-    @Override
+    private void addClient() {
+        phones.forEach(phone -> phone.setClient(this));
+    }
+
+        @Override
     public Client clone() {
         return new Client(this.id, this.name);
     }
@@ -72,11 +79,11 @@ public class Client implements Cloneable {
     }
 
     public List<Phone> getPhone() {
-        return phone;
+        return phones;
     }
 
     public void setPhone(List<Phone> phone) {
-        this.phone = phone;
+        this.phones = phone;
     }
 
     @Override
@@ -85,7 +92,7 @@ public class Client implements Cloneable {
             "id=" + id +
             ", name='" + name + '\'' +
             ", address=" + address +
-            ", phone=" + phone +
+            ", phone=" + phones +
             '}';
     }
 }
