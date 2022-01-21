@@ -30,6 +30,11 @@ allprojects {
             imports {
                 mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.2")
             }
+            dependency("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
+            dependency("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
+            dependency("org.assertj:assertj-core:${Versions.assertJ}")
+            dependency("org.mockito:mockito-core:${Versions.mockito}")
+            dependency("org.mockito:mockito-junit-jupiter:${Versions.mockito}")
             dependency("com.google.guava:guava:${Versions.guava}")
             dependency("org.openjdk.jmh:jmh-core:${Versions.jmh}")
             dependency("org.openjdk.jmh:jmh-generator-annprocess:${Versions.jmh}")
@@ -39,6 +44,7 @@ allprojects {
             dependency("com.google.protobuf:protobuf-java-util:${Versions.protobuf}")
             dependency("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
             dependency("org.testcontainers:postgresql:${Versions.testcontainers}")
+
         }
     }
 

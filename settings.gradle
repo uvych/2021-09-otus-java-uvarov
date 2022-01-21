@@ -7,5 +7,6 @@ include 'hw5-aop'
 include 'hw6-ATM'
 include 'hw7-pattern'
 include 'hw8-json'
-include 'hw10-jpql:homework-template'
-
+include 'L18-jdbc'
+include 'L18-jdbc:demo'
+include 'L18-jdbc:homework'
