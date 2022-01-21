@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    dependencies {
+        implementation project(':L18-jdbc:demo')
+        implementation 'ch.qos.logback:logback-classic:1.2.10'
+
+        implementation 'org.flywaydb:flyway-core:8.4.0'
+
+        implementation 'org.postgresql:postgresql:42.3.1'
+    }
+}
+
+test {
+}
