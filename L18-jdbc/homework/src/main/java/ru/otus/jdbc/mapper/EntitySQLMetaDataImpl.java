@@ -23,7 +23,7 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     private final Map<SQLCommand, String> cacheSQL = new HashMap<>();
 
-    public EntitySQLMetaDataImpl(EntityClassMetaDataImpl<?> entityClassMetaData) {
+    public EntitySQLMetaDataImpl(EntityClassMetaData<?> entityClassMetaData) {
         this.entityClassMetaData = entityClassMetaData;
     }
 

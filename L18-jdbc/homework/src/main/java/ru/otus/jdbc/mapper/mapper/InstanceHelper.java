@@ -3,7 +3,7 @@ package ru.otus.jdbc.mapper.mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.core.repository.DataTemplateException;
-import ru.otus.jdbc.mapper.EntityClassMetaDataImpl;
+import ru.otus.jdbc.mapper.EntityClassMetaData;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -14,9 +14,9 @@ import java.util.List;
 
 public class InstanceHelper<T> implements Helper<T>{
     private static final Logger log = LoggerFactory.getLogger(InstanceHelper.class);
-    private final EntityClassMetaDataImpl<T> classMetaData;
+    private final EntityClassMetaData<T> classMetaData;
 
-    public InstanceHelper(EntityClassMetaDataImpl<T> classMetaData) {
+    public InstanceHelper(EntityClassMetaData<T> classMetaData) {
         this.classMetaData = classMetaData;
     }
 
