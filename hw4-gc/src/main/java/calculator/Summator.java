@@ -1,6 +1,7 @@
 package calculator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Summator {
     private int sum = 0;
