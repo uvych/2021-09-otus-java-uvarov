@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 public class MyCache<K, V> implements HwCache<K, V> {
-    List<HwListener<K,V>> listeners = new ArrayList<>();
-    WeakHashMap<K,V> cache = new WeakHashMap<>();
+    private final List<HwListener<K,V>> listeners = new ArrayList<>();
+    private final WeakHashMap<K,V> cache = new WeakHashMap<>();
 
     @Override
     public void put(K key, V value) {
