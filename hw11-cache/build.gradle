@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation("ch.qos.logback:logback-classic")
+    implementation("org.ehcache:ehcache")
+    implementation 'com.zaxxer:HikariCP:5.0.0'
+
+    implementation 'org.flywaydb:flyway-core:8.4.0'
+
+    implementation 'org.postgresql:postgresql:42.3.1'
+}
+
+
+test {
+    useJUnitPlatform()
+}
