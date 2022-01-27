@@ -1,11 +1,14 @@
 package ru.otus.services;
 
 import org.slf4j.*;
+import ru.otus.mapper.*;
 import ru.otus.model.*;
+import ru.otus.model.dto.*;
 import ru.otus.repository.*;
 import ru.otus.sessionmanager.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class DbServiceClientImpl implements DBServiceClient {
     private static final Logger log = LoggerFactory.getLogger(DbServiceClientImpl.class);
@@ -19,7 +22,8 @@ public class DbServiceClientImpl implements DBServiceClient {
     }
 
     @Override
-    public Client saveClient(Client client) {
+    public Client saveClient(ClientDTO clientDTO) {
+        Client client = ClientMapper.getClient(clientDTO);
         return transactionManager.doInTransaction(session -> {
             var clientCloned = client.clone();
             if (client.getId() == null) {
@@ -43,11 +47,11 @@ public class DbServiceClientImpl implements DBServiceClient {
     }
 
     @Override
-    public List<Client> findAll() {
+    public List<ClientDTO> findAll() {
         return transactionManager.doInReadOnlyTransaction(session -> {
             var clientList = clientDataTemplate.findAll(session);
             log.info("clientList:{}", clientList);
-            return clientList;
+            return clientList.stream().map(ClientMapper::getDTO).collect(Collectors.toList());
        });
     }
 }

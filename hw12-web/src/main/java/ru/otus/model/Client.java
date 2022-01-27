@@ -1,11 +1,13 @@
 package ru.otus.model;
 
 
+import com.google.gson.annotations.*;
+
 import javax.persistence.*;
-import java.util.*;
+import java.util.List;
 
 @Entity
-@Table(name = "client")
+@Table(name = "clients")
 public class Client implements Cloneable {
 
     @Id
@@ -17,9 +19,11 @@ public class Client implements Cloneable {
     private String name;
 
     @OneToOne(orphanRemoval = true, cascade = CascadeType.PERSIST)
+    @SerializedName(value = "adress")
     private Address address;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.PERSIST, mappedBy = "client")
+    @SerializedName(value = "phone")
     private List<Phone> phones;
 
     public Client() {
@@ -90,7 +94,7 @@ public class Client implements Cloneable {
             "id=" + id +
             ", name='" + name + '\'' +
             ", address=" + address +
-            ", phone=" + phones +
+            ", phones=" + phones +
             '}';
     }
 }

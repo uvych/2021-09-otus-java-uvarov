@@ -1,14 +1,15 @@
 package ru.otus.services;
 
 import ru.otus.model.*;
+import ru.otus.model.dto.*;
 
 import java.util.*;
 
 public interface DBServiceClient {
 
-    Client saveClient(Client client);
+    Client saveClient(ClientDTO clientDTO);
 
     Optional<Client> getClient(long id);
 
-    List<Client> findAll();
+    List<ClientDTO> findAll();
 }
