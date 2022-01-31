@@ -7,6 +7,7 @@ public interface Versions {
     String protobuf = "3.19.1";
 
     String testcontainers = "1.15.3";
+    String reflections = "0.10.2";
 
     String lombok = "1.18.22";
     String gson = "2.8.9";
