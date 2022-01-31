@@ -1,8 +1,5 @@
 public interface Versions {
-    String guava = "31.0.1-jre";
-    String junit = "5.7.0";
-    String assertJ = "3.21.0";
-    String mockito = "4.0.0";
+    String guava = "30.1.1-jre";
     String jmh = "1.33";
     String jol = "0.16";
     String asm = "9.2";
@@ -10,4 +7,12 @@ public interface Versions {
     String protobuf = "3.19.1";
 
     String testcontainers = "1.15.3";
+    String reflections = "0.10.2";
+
+    String lombok = "1.18.22";
+    String gson = "2.8.9";
+
+    String jetty = "11.0.7";
+    String freemarker = "2.3.31";
+
 }

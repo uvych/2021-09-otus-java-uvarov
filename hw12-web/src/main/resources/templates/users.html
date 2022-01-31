@@ -1,0 +1,48 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пользователи</title>
+    <script>
+        function getAllClient() {
+            const userDataContainer = document.getElementById('userDataContainer');
+            fetch('api/user')
+                .then(response => response.json())
+                .then(client => userDataContainer.innerHTML = JSON.stringify(client));
+        }
+    </script>
+    <script>
+        function saveUser() {
+            const userNameTextBox = document.getElementById('userNameTextBox');
+            const userAddressTextBox = document.getElementById('userLoginTextBox');
+            const userPhoneTextBox = document.getElementById('userPasswordTextBox');
+
+            var data = {
+                name: userNameTextBox.value,
+                address: userAddressTextBox.value,
+                phone: userPhoneTextBox.value,
+            };
+
+
+            fetch('api/user', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        }
+    </script>
+</head>
+
+<body>
+
+Имя пользователя <input type="text" id = "userNameTextBox" placeholder="Имя пользователя"><Br><Br>
+Адресс пользователя <input type="text" id = "userAddressTextBox" placeholder="Адресс пользователя"><Br><Br>
+Телефон пользователя <input type="text" id = "userPhoneTextBox" placeholder="Телефон пользователя"><Br><Br>
+<Br><Br>
+<button onclick="getAllClient()">Получить список пользователей</button><Br><Br>
+<button onclick="saveUser()">Создать пользователя</button><Br><Br>
+
+<pre id = "userDataContainer"></pre>
+
+</body>
+</html>
